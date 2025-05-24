@@ -54,23 +54,56 @@ class PostsController < ApplicationController
         }
       end
 
+
+
       def create
-        @post = Post.new(post_params)
-        @post.user = current_user
+        post = current_user.posts.build(title: post_params[:title], body: post_params[:body])
       
-        if @post.save
-          tag_ids = params[:tag_ids] || []
-          if tag_ids.empty?
-            render json: { error: "Post must have at least one tag" }, status: :unprocessable_entity
-            @post.destroy
-          else
-            @post.tag_ids = tag_ids
-            render json: @post, status: :created
-          end
+        tag_names = params[:tags]
+      
+        if tag_names.blank? || !tag_names.is_a?(Array) || tag_names.empty?
+          return render json: { error: "At least one tag is required" }, status: :unprocessable_entity
+        end
+      
+        tags = tag_names.map do |tag_name|
+          Tag.find_or_create_by(name: tag_name.downcase.strip)
+        end
+      
+        post.tags = tags
+      
+        if post.save
+          render json: {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            tags: post.tags.map(&:name),
+            author: {
+              id: post.user.id,
+              name: post.user.name,
+              email: post.user.email
+            }
+          }, status: :created
         else
-          render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
+          render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
         end
       end
+    #   def create
+    #     @post = Post.new(post_params)
+    #     @post.user = current_user
+      
+    #     if @post.save
+    #       tag_ids = params[:tag_ids] || []
+    #       if tag_ids.empty?
+    #         render json: { error: "Post must have at least one tag" }, status: :unprocessable_entity
+    #         @post.destroy
+    #       else
+    #         @post.tag_ids = tag_ids
+    #         render json: @post, status: :created
+    #       end
+    #     else
+    #       render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
+    #     end
+    #   end
 
     def update
         @post = Post.find(params[:id])
@@ -149,7 +182,7 @@ def update_tags
       private
 
       def post_params
-        params.require(:post).permit(:title, :body)
+        params.permit(:title, :body, tags: [])
       end
       
 

@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
   belongs_to :user
-  has_many :post_tag
-  has_many :tag, through: :post_tag
+  has_many :post_tags, dependent: :destroy
+  has_many :tags, through: :post_tags
 
   has_many :comments, dependent: :destroy
   validate :must_have_at_least_one_tag
@@ -15,7 +15,7 @@ class Post < ApplicationRecord
   end
 
   def schedule_deletion
-    DeletePostJob.perform(self.id)
+    DeletePostJob.perform_in(24.hours, self.id)
   end
-end
+
 end
