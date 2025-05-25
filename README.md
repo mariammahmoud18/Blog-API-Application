@@ -1,24 +1,42 @@
-# README
+# Blog API
+A simple RESTful Blog API built with Ruby on Rails, PostgreSQL, JWT authentication, Sidekiq, and Redis.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
 
-Things you may want to cover:
+## Features
 
-* Ruby version
+- User Authentication (Signup/Login) with JWT
+- Create, Read, Update, and Delete blog posts
+- Add/Edit/Delete comments on posts
+- Tag posts (with tag creation if not found)
+- Schedule automatic post deletion after 24 hours
 
-* System dependencies
+##  Getting Started
 
-* Configuration
+### Prerequisites
 
-* Database creation
+- Ruby 3.0+
+- Rails 7+
+- PostgreSQL
+- Redis (v6.2+ required for Sidekiq)
+- Sidekiq
 
-* Database initialization
+### Setup Instructions
 
-* How to run the test suite
+```bash
+# Clone the repo
+git clone https://github.com/your-username/blog-api.git
+cd blog-api
 
-* Services (job queues, cache servers, search engines, etc.)
+# Install dependencies
+bundle install
 
-* Deployment instructions
+# Set up the database
+rails db:create db:migrate db:seed
 
-* ...
+# Start the Rails server
+rails s
+
+# Start Sidekiq (in a new terminal)
+bundle exec sidekiq
+```
+
