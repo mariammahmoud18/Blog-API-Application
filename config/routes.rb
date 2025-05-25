@@ -10,8 +10,8 @@ Rails.application.routes.draw do
 
   resources :posts do
     resources :comments, only: [:create]
-    member do
-      patch :update_tags   
+     member do
+      patch 'tags', to: 'posts#update_tags'
     end
   end
 

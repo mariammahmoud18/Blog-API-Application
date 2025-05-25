@@ -87,28 +87,12 @@ class PostsController < ApplicationController
           render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
         end
       end
-    #   def create
-    #     @post = Post.new(post_params)
-    #     @post.user = current_user
-      
-    #     if @post.save
-    #       tag_ids = params[:tag_ids] || []
-    #       if tag_ids.empty?
-    #         render json: { error: "Post must have at least one tag" }, status: :unprocessable_entity
-    #         @post.destroy
-    #       else
-    #         @post.tag_ids = tag_ids
-    #         render json: @post, status: :created
-    #       end
-    #     else
-    #       render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
-    #     end
-    #   end
+
 
     def update
         @post = Post.find(params[:id])
         if @post.user != current_user
-          render json: { error: "Unauthorized User Acess" }, status: :unauthorized
+          render json: { error: "Unauthorized User Access" }, status: :unauthorized
           return
         end
       
@@ -121,23 +105,19 @@ class PostsController < ApplicationController
     end
 
 
-    # PATCH /posts/:id/update_tags
 def update_tags
     post = Post.find(params[:id])
   
-    # Make sure only the post's owner can update tags
     if post.user != current_user
       return render json: { error: "Unauthorized User Access" }, status: :unauthorized
     end
   
-    # Expect an array of tag IDs from the request
     tag_ids = params[:tag_ids]
   
     if tag_ids.blank? || tag_ids.empty?
       return render json: { error: "A post must have at least one tag." }, status: :unprocessable_entity
     end
   
-    # Assign the new tags to the post
     post.tag_ids = tag_ids
   
     render json: {
@@ -147,26 +127,6 @@ def update_tags
   end
     
   
-def update_tags
-    post = Post.find(params[:id])
-  
-    if post.user != current_user
-      return render json: { error: "Unauthorized User Access" }, status: :unauthorized
-    end
-  
-    tag_ids = params[:tag_ids]
-  
-    if tag_ids.blank? || tag_ids.empty?
-      return render json: { error: "A post must have at least one tag." }, status: :unprocessable_entity
-    end
-  
-    post.tag_ids = tag_ids
-  
-    render json: {
-      message: "Tags updated successfully",
-      tags: post.tags.map { |tag| { id: tag.id, name: tag.name } }
-    }
-  end
   
       def destroy
         @post = Post.find(params[:id])
