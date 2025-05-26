@@ -118,7 +118,7 @@ Update your own comment.
 **DELETE** `/comments/:id`  
 Deletes a comment. Only the author can delete their own comment.
 
-## 🏷️ Tags Endpoints
+##  Tags Endpoints
 
 ### Get All Tags
 **GET** `/tags`  
